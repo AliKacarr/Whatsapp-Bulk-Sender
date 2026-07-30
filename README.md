@@ -1,6 +1,6 @@
 # WhatsApp Toplu Mesaj Gönderici
 
-Excel dosyalarındaki sipariş verilerini otomatik okuyan, dinamik mesaj şablonlarıyla müşterilere WhatsApp üzerinden toplu ve otomatik bildirim göndermenizi sağlayan modern web tabanlı yönetim paneli.
+Excel dosyalarındaki sipariş verilerini otomatik okuyan, dinamik **mesaj şablonlarıyla** müşterilere WhatsApp üzerinden tek tıkla **toplu ve otomatik mesaj** göndermenizi sağlayan modern web tabanlı yönetim paneli.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.121+-009688.svg)
@@ -12,13 +12,12 @@ Excel dosyalarındaki sipariş verilerini otomatik okuyan, dinamik mesaj şablon
 
 ## Öne Çıkan Özellikler
 
-- **Otomatik & Toplu Gönderim:** İster tekli ister filtreleme ve toplu seçim yaparak otomatik bildirim gönderimi.
-- **Excel Sipariş İçe Aktarma:** `.xlsx` ve `.xls` formatındaki sipariş listelerini tek tıkla yükleme.
-- **Dinamik Mesaj Şablonları:** Müşteri adı, sipariş tutarı, kargo detayları gibi değişkenlerle (`{Ad}`, `{SiparisNo}`) kişiselleştirilmiş mesajlar hazırlama.
-- **QR Kod ile Kolay WhatsApp Bağlantısı:** Node.js **Baileys** kütüphanesi altyapısıyla WhatsApp hesabını anında bağlama.
-- **Canlı Durum Takibi:** Gönderim süreçlerini (Başarılı, Bekliyor, Hatalı) anlık takip etme.
-- **Profil & Şablon Yönetimi:** Farklı mağaza veya iş süreçleri için özel profiller oluşturma.
-- **Docker Desteği:** Konteyner mimarisi ile her ortamda tek komutla kurulum.
+- **Otomatik & Toplu Gönderim:** İster tekli ister filtreleme ve toplu seçim yaparak müşterilerinize şablonlarla otomatik WhatsApp mesajı gönderin.
+- **Excel Sipariş İçe Aktarma:** `.xlsx` ve `.xls` formatındaki sipariş listelerini tek tıkla yükleyin.
+- **Dinamik Mesaj Şablonları:** Müşteri adı, sipariş tutarı, kargo detayları gibi değişkenlerle (`{Ad}`, `{SiparisNo}`) kişiselleştirilmiş mesajlar hazırlayın.
+- **QR Kod ile Kolay WhatsApp Bağlantısı:** Node.js **Baileys** kütüphanesi altyapısıyla WhatsApp hesabınızı anında bağlayın.
+- **Canlı Durum Takibi:** Gönderim süreçlerini (Başarılı, Bekliyor, Hatalı) anlık takip edin.
+- **Profil & Şablon Yönetimi:** Farklı mağaza veya iş süreçleri için özel profiller oluşturun.
 
 ---
 
@@ -26,7 +25,7 @@ Excel dosyalarındaki sipariş verilerini otomatik okuyan, dinamik mesaj şablon
 
 - **Backend:** Python (FastAPI, Uvicorn, Pandas)
 - **WhatsApp Servisi:** Node.js, Baileys, Express
-- **Frontend:** HTML5, CSS3, JavaScript
+- **Frontend:** HTML, CSS, JavaScript
 - **Konteynerizasyon:** Docker
 
 ---
@@ -74,13 +73,14 @@ Servisler başladığında tarayıcınızda **`http://127.0.0.1:8000/`** adresin
 ## Kullanım Rehberi
 
 1. **Bağlantı Kurun:** Arayüzdeki QR kodu WhatsApp mobil uygulamanızdan okutun.
-2. **Excel Yükleyin:** Sipariş listenizi sürükleyip bırakın veya seçin.
-3. **Şablon Oluşturun:** Mesaj taslağınızı dinamik değişkenlerle (`{Ad}`, `{Tutar}` vs.) özelleştirin.
-4. **Gönderin:** Gönderilecek siparişleri seçip toplu veya tekil gönderimi başlatın.
+2. **Profil Seçin veya Oluşturun:** Panel varsayılan olarak **Naturan** profili ile açılır; ihtiyacınıza göre yeni mağaza/iş profilleri oluşturabilir veya değiştirebilirsiniz.
+3. **Excel Yükleyin:** Sipariş listenizi sürükleyip bırakın veya seçin.
+4. **Şablon Oluşturun:** Mesaj taslağınızı dinamik değişkenlerle (`{Ad}`, `{Tutar}` vs.) özelleştirin.
+5. **Gönderin:** Gönderilecek siparişleri seçip otomatik toplu gönderimi başlatın.
 
 ---
 
-## Yazar
+## Geliştirici
 
 **Ali Kaçar**
 

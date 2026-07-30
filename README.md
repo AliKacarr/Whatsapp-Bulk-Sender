@@ -31,7 +31,21 @@ Excel dosyalarındaki sipariş verilerini otomatik okuyan, dinamik mesaj şablon
 
 ---
 
+## 📸 Ekran Görüntüleri
+
+| Ana Sayfa | Gizlenen Siparişler |
+|:-----------------:|:-------------------:|
+| <img src="public/site_gorselleri/1- Ana Sayfa.png" alt="Ana Sayfa" width="400"> | <img src="public/site_gorselleri/2- Gizlenen Siparişler.png" alt="Gizlenen Siparişler" width="400"> |
+
+| Profiller | Dosya Yönetimi |
+|:-----------------:|:-------------------:|
+| <img src="public/site_gorselleri/3- Profiller.png" alt="Profiller" width="400"> | <img src="public/site_gorselleri/4- Excel Dosyaları Yönetimi.png" alt="Dosya Yönetimi" width="400"> |
+
+
+---
+
 ## Hızlı Başlangıç
+
 
 #### WhatsApp Servisi
 ```bash

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naturan - WhatsApp Sipariş Mesaj Gönderici</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css?v=1.4">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left" style="display:flex; align-items:center; gap:1.25rem;">
+            <div class="header-logo">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <button class="profile-switcher" onclick="openProfileModal()" title="Profil değiştir veya yönet">
+                <span class="profile-icon"><span></span><span></span><span></span><span></span></span>
+                <span id="active-profile-name"></span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="header-right">
+
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <i class="fas fa-boxes-stacked text-muted"></i>
+                    Toplam Sipariş: <span class="value" id="stat-total">0</span>
+                </div>
+                <div class="stat-badge problematic">
+                    <i class="fas fa-circle-exclamation"></i>
+                    Sorunlu Sipariş: <span class="value" id="stat-problematic">0</span>
+                </div>
+                <div class="stat-badge">
+                    <i class="fas fa-robot text-muted"></i>
+                    Gönderilen: <span class="value" id="stat-sent">0</span>
+                </div>
+                <div class="stat-badge stat-badge-select">
+                    <i class="fas fa-file-excel text-muted"></i>
+                    <select id="excel-file-select" onchange="loadSelectedExcel()">
+                        <option value="all">Tümü</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="openExcelManagerModal()"
+                    title="Excel Dosyalarını Yönet (Yükle / Sil)">
+                    <i class="fa-regular fa-folder-open" style="color: #ffffff;"></i>
+                </button>
+                <button class="btn btn-secondary" onclick="refreshData()" title="Yenile">
+                    <i class="fas fa-arrows-rotate"></i>
+                </button>
+                <button id="wa-status-btn" class="btn btn-secondary wa-status-btn" onclick="openQRModal()"
+                    title="WhatsApp bağlantı durumu">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp: <span class="value" id="wa-status-text"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Left Side: Editor & Controls -->
+        <div class="editor-panel">
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-pen-to-square"></i>
+                    Şablon Tasarımcısı
+                </div>
+
+                <div class="template-editor">
+                    <label for="template-input">Mesaj Şablonu</label>
+                    <textarea id="template-input" oninput="updatePreview()"
+                        placeholder="Mesajınızı yazın..."></textarea>
+
+                    <label>Eklenebilir Bilgiler (Tıklayın)</label>
+                    <div class="placeholders-container" id="placeholders-container">
+                        <!-- Dynamic placeholders will be loaded here -->
+                        <span class="placeholders-loading">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-eye"></i>
+                    Mesaj Önizleme
+                </div>
+                <div id="preview-box" class="preview-container empty">
+                    <div class="preview-empty">Önizlemek için sağdan herhangi bir sipariş seçin.</div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <!-- Right Side: Orders List -->
+        <div class="orders-panel">
+
+            <!-- Bulk Actions Bar -->
+            <div class="card bulk-send-card">
+                <div class="bulk-buttons">
+                    <!-- LEFT: hint when no selection, action buttons when selection active -->
+                    <div class="selection-toggle-shell">
+                        <!-- Hint text: visible when no selection -->
+                        <span id="selection-hint" class="selection-fade-visible">
+                            <i class="fas fa-hand-pointer"></i>
+                            Sipariş seçmek için kartlara tıklayın
+                        </span>
+                        <!-- Sayaç + butonlar: kart seçilince görünür -->
+                        <div id="selection-actions" class="bulk-group selection-fade-hidden">
+                            <span id="selection-counter-badge" class="selection-counter-badge">
+                                <span id="selected-count">0</span><span id="selection-counter-total"></span>
+                            </span>
+                            <button class="bulk-btn bulk-btn-hide-sel" id="btn-hide-selected"
+                                onclick="hideSelectedOrders()">
+                                <i class="fas fa-eye-slash"></i>
+                                Seçilenleri Gizle
+                            </button>
+                            <button class="bulk-btn bulk-btn-send-sel" id="btn-send-selected"
+                                onclick="sendToSelected()">
+                                <i class="fas fa-robot"></i>
+                                Seçilenlere Mesaj Gönder
+                            </button>
+                        </div>
+                    </div>
+                    <!-- RIGHT: Always-visible global actions -->
+                    <div class="bulk-group">
+                        <button class="bulk-btn bulk-btn-hide-sent" id="btn-hide-sent" onclick="hideSentOrders()">
+                            <i class="fas fa-eye-slash"></i>
+                            Tüm Gönderilen Müşterileri Gizle
+                        </button>
+                        <button class="bulk-btn bulk-btn-auto" id="btn-bulk-send" onclick="startBulkSend()">
+                            <i class="fas fa-robot"></i>
+                            Tüm Bekleyenlere Oto Mesaj Gönder
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="search-wrapper">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input type="text" id="search-input" class="search-input" oninput="filterOrders()"
+                        placeholder="Müşteri adı, tel veya no ile ara...">
+                </div>
+
+                <div id="bulk-progress-badge" class="bulk-progress-badge" style="display:none;">
+                    <i class="fas fa-paper-plane"></i>
+                    <span id="bulk-progress-text">Oto Gönderim: 0 / 0</span>
+                </div>
+
+                <div class="sort-wrapper">
+                    <i class="fas fa-arrow-up-wide-short" style="color:var(--text-muted); font-size:0.85rem;"></i>
+                    <select id="sort-select" class="sort-select" onchange="saveSortPref(); renderOrders()">
+                        <option value="default">Varsayılan Sıralama</option>
+                        <option value="date-desc">Tarih ↓ (Yeniden Eskiye)</option>
+                        <option value="date-asc">Tarih ↑ (Eskiden Yeniye)</option>
+                        <option value="name-asc">İsim A→Z</option>
+                        <option value="name-desc">İsim Z→A</option>
+                        <option value="status">Duruma Göre</option>
+                        <option value="cargo">Kargo Firmasına Göre</option>
+                        <option value="order-no-asc">Sipariş No ↑</option>
+                        <option value="order-no-desc">Sipariş No ↓</option>
+                    </select>
+                </div>
+
+                <div class="filters-controls">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="auto-hide-sent" onchange="saveFilterPrefs()">
+                        <span class="custom-checkbox"></span>
+                        Mesaj Gönderdikten Sonra Müşteriyi Gizle
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="filter-not-sent-only" onchange="saveFilterPrefs(); filterOrders()">
+                        <span class="custom-checkbox"></span>
+                        Sadece Mesaj Gönderilmemiş Müşterileri Göster
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="filter-problematic-only"
+                            onchange="saveFilterPrefs(); filterOrders()">
+                        <span class="custom-checkbox"></span>
+                        Sadece Sorunlu Müşterileri Göster
+                    </label>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="orders-grid" id="orders-container">
+                <div class="no-data">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Siparişler yükleniyor...</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas"></i>
+        <span id="toast-message">Bildirim mesajı</span>
+    </div>
+
+    <div class="profile-modal-backdrop" id="profile-modal" onclick="closeProfileModal(event)">
+        <div class="profile-modal">
+            <div class="profile-modal-header">
+                <div class="profile-modal-title">Profiller</div>
+                <button class="profile-close" onclick="closeProfileModal()" title="Kapat"><i
+                        class="fas fa-xmark"></i></button>
+            </div>
+            <div class="profile-list" id="profile-list"></div>
+            <div class="profile-create-row">
+                <input class="profile-create-input" id="new-profile-name" maxlength="50" placeholder="Yeni profil adı">
+                <button class="btn btn-primary" onclick="createProfile()"><i class="fas fa-plus"></i> Ekle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp QR Modal -->
+    <div class="wa-modal-backdrop" id="wa-qr-modal" onclick="closeQRModal(event)">
+        <div class="wa-modal">
+            <div class="wa-modal-header">
+                <div class="wa-modal-title"><i class="fab fa-whatsapp"></i> WhatsApp Bağlantısı</div>
+                <button class="profile-close" onclick="closeQRModal()" title="Kapat"><i
+                        class="fas fa-xmark"></i></button>
+            </div>
+            <div class="wa-modal-body">
+                <div id="wa-qr-content">
+                    <div class="wa-qr-loading"><i class="fas fa-circle-notch fa-spin"></i> QR kod bekleniyor...</div>
+                </div>
+                <div id="wa-connected-content" style="display:none;">
+                    <div class="wa-connected-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div class="wa-connected-text">WhatsApp bağlı</div>
+                    <div id="wa-connected-phone"
+                        style="color:var(--primary); font-size:1.05rem; font-weight:800; margin-top:0.5rem; letter-spacing:0.5px;">
+                    </div>
+                    <button class="btn btn-secondary btn-danger" onclick="logoutWhatsApp()" style="margin-top:1.25rem;">
+                        <i class="fas fa-right-from-bracket"></i> Oturumu Kapat
+                    </button>
+                </div>
+                <div id="wa-offline-content" style="display:none;">
+                    <div class="wa-offline-icon"><i class="fas fa-plug-circle-xmark"></i></div>
+                    <div class="wa-connected-text" style="color:var(--accent-red);">Çıkış Yapıldı</div>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem;">WhatsApp oturumu kapalı.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel Manager Modal -->
+    <div class="profile-modal-backdrop" id="excel-manager-modal" onclick="closeExcelManagerModal(event)">
+        <div class="profile-modal" style="width: min(560px, 100%);">
+            <div class="profile-modal-header">
+                <div class="profile-modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+                    <i class="fas fa-file-excel" style="color:var(--primary);"></i> Excel Dosyaları Yönetimi
+                </div>
+                <button class="profile-close" onclick="closeExcelManagerModal()" title="Kapat"><i
+                        class="fas fa-xmark"></i></button>
+            </div>
+
+            <div style="margin-bottom: 1.2rem;">
+                <input type="file" id="excel-upload-input-modal" accept=".xlsx" multiple style="display: none;"
+                    onchange="handleExcelUploadModal(event)">
+                <button class="btn btn-primary"
+                    style="width: 100%; justify-content: center; padding: 0.75rem; border-radius: 12px; font-weight:700;"
+                    onclick="triggerExcelUploadModal()">
+                    <i class="fas fa-cloud-arrow-up"></i> Yeni Excel Dosyası Yükle (.xlsx)
+                </button>
+            </div>
+
+            <label
+                style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:0.6rem; display:block; text-transform:uppercase; letter-spacing:0.5px;">Sistemdeki
+                Excel Dosyaları</label>
+            <div class="profile-list" id="excel-files-modal-list">
+                <!-- Dynamic files will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=1.5"></script>
+</body>
+
+</html>

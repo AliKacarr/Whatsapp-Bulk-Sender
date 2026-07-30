@@ -1,0 +1,9 @@
+fastapi>=0.121.1
+uvicorn>=0.38.0
+pandas>=2.2.3
+openpyxl>=3.1.5
+httpx
+pydantic>=2.12.4
+python-multipart
+pywhatkit>=5.4
+pyautogui>=0.9.54
